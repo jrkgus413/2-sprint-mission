@@ -13,3 +13,33 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  price       Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  Comments   Comment[]
+}
+
+model Article {
+  id        Int    @id @default(autoincrement())
+  title     String
+  content   String
+  createdAt String
+  updatedAt String
+  Comments   Comment[]
+}
+
+model Comment {
+  id        Int    @id @default(autoincrement())
+  content   String
+  createdAt String
+
+  articleId Int?
+  article   Article? @relation(fields: [articleId], references: [id], onDelete: SetNull)
+  productId Int?
+  product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+}
