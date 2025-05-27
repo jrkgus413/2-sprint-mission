@@ -15,22 +15,23 @@ datasource db {
 }
 
 model Product {
-  id          Int      @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   name        String
   description String?
   price       Float
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  Comments   Comment[]
+  tags        String[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  Comments    Comment[]
 }
 
 model Article {
-  id        Int    @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   title     String
   content   String
   createdAt String
   updatedAt String
-  Comments   Comment[]
+  Comments  Comment[]
 }
 
 model Comment {
