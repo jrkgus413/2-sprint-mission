@@ -8,12 +8,6 @@ var CreateProductDto = object({
   imageUrl: optional(string()),
 })
 
-var SearchProductDto = object({
-  page: number(),
-  limit: number()
-})
-
 module.exports = {
   CreateProductDto,
-  SearchProductDto
 }
