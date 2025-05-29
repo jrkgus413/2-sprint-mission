@@ -1,8 +1,19 @@
+const { getValidatedId } = require('../utils/common');
 const { db } = require('../utils/db');
 const { handleError } = require('../utils/error');
 
+// 상품 존재 확인 유틸 함수
+const findProduct = async (id, res) => {
+  const product = await db.product.findUnique({ where: { id } });
+  if (!product) {
+    res.status(404).json({ error: '상품품이 존재하지 않습니다.' });
+    return null;
+  }
+  return product;
+};
+
 /**
- * @description 상품을 생성하는 API
+ * @description 상품 등록
  * @route POST /products
  * 
  * @param {string} req.body.name - 상품 이름
@@ -18,14 +29,15 @@ const postProduct = async (req, res) => {
     const newProduct = await db.product.create({
       data: { name, description, price, tags, imageUrl },
     });
-    res.status(201).json(newProduct);
+
+    res.status(201).json({newProduct, message: "상품이 등록되었습니다."});
   } catch (error) {
     handleError(res, error);
   }
 }
 
 /**
- * @description 상품 목록을 조회하는 API
+ * @description 상품 목록 조회
  * @route GET /products
  * 
  * @param {number} req.query.offset - 조회 시작 위치 (기본값: 0)
@@ -57,17 +69,17 @@ const getProduct = async (req, res) => {
 };
 
 /**
-  * @description 상품 ID로 특정 상품을 조회하는 API
+  * @description 상품 ID로 상품 조회
   * @route GET /products/:id
   * 
   * @param {number} req.params.id - 조회할 상품 ID
  */
 const getProductById = async (req, res) => {
-  if (!req.validatedId) return;
+  const productId = getValidatedId(req.validatedId);
 
   try {
-    const product = await db.product.findUnique({ where: { id: productId } });
-    if (!product) return res.status(404).json({ error: '조회 상품이 존재하지 않습니다.' });
+    const product = findProduct(productId, res);
+    if (!product) return;
     res.status(200).json(product);
   } catch (error) {
     handleError(res, error);
@@ -75,7 +87,7 @@ const getProductById = async (req, res) => {
 };
 
 /**
-  * @description 상품 정보를 수정하는 API
+  * @description 상품 정보 수정
   * @route PATCH /products/:id
   * 
   * @param {number} req.params.id - 수정할 상품 ID
@@ -86,14 +98,15 @@ const getProductById = async (req, res) => {
   * @param {string} req.body.imageUrl - 상품 이미지 URL
  */
 const patchProduct = async (req, res) => {
-  if (!req.validatedId) return;
+  const productId = getValidatedId(req.validatedId);
 
   const { name, description, price, tags, imageUrl } = req.body;
 
   try {
-    // 상품 ID로 상품 조회
-    const product = await db.product.findUnique({ where: { id: productId } });
-    if (!product) return res.status(404).json({ error: '조회 상품이 존재하지 않습니다.' });
+    // 상품이 존재하는지 확인
+    const product = findProduct(productId, res);
+    if (!product) return;
+
     // 상품이 존재할 경우 업데이트
     const updatedProduct = await db.product.update({
       where: { id: productId },
@@ -106,21 +119,22 @@ const patchProduct = async (req, res) => {
 }
 
 /**
- * @description 상품을 삭제하는 API
+ * @description 상품 삭제
  * @route DELETE /products/:id
  * 
  * @param {number} req.params.id - 삭제할 상품 ID
  */
 const deleteProduct = async (req, res) => {
-  if (!req.validatedId) return;
+  const productId = getValidatedId(req.validatedId);
 
   try {
     // 상품 ID로 상품 조회
-    const product = await db.product.findUnique({ where: { id: productId } });
-    if (!product) return res.status(404).json({ error: '조회 상품이 존재하지 않습니다.' });
+    const product = findProduct(productId, res);
+    if (!product) return;
+    
     // 상품이 존재할 경우 삭제
     await db.product.delete({ where: { id: productId } });
-    res.status(204).send();
+    res.status(204).json({ message: '상품이 삭제되었습니다.' });
   } catch (error) {
     handleError(res, error);
   }
