@@ -20,6 +20,7 @@ model Product {
   description String?
   price       Float
   tags        String[]
+  imageUrl    String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   Comments    Comment[]
@@ -29,15 +30,15 @@ model Article {
   id        Int       @id @default(autoincrement())
   title     String
   content   String
-  createdAt String
-  updatedAt String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   Comments  Comment[]
 }
 
 model Comment {
-  id        Int    @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   content   String
-  createdAt String
+  createdAt DateTime @default(now())
 
   articleId Int?
   article   Article? @relation(fields: [articleId], references: [id], onDelete: SetNull)

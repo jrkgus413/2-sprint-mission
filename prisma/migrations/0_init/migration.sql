@@ -5,6 +5,7 @@ CREATE TABLE "Product" (
     "description" TEXT,
     "price" DOUBLE PRECISION NOT NULL,
     "tags" TEXT[],
+    "imageUrl" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -16,8 +17,8 @@ CREATE TABLE "Article" (
     "id" SERIAL NOT NULL,
     "title" TEXT NOT NULL,
     "content" TEXT NOT NULL,
-    "createdAt" TEXT NOT NULL,
-    "updatedAt" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Article_pkey" PRIMARY KEY ("id")
 );
@@ -26,7 +27,7 @@ CREATE TABLE "Article" (
 CREATE TABLE "Comment" (
     "id" SERIAL NOT NULL,
     "content" TEXT NOT NULL,
-    "createdAt" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "articleId" INTEGER,
     "productId" INTEGER,
 
