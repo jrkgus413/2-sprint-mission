@@ -1,17 +1,6 @@
-const { getValidatedId } = require('../utils/common');
 const { db } = require('../utils/db');
 const { handleError } = require('../utils/error');
-
-// 상품 존재 확인 유틸 함수
-const findProduct = async (id, res) => {
-  const product = await db.product.findUnique({ where: { id } });
-  if (!product) {
-    res.status(404).json({ error: '상품품이 존재하지 않습니다.' });
-    return null;
-  }
-  return product;
-};
-
+const { getValidatedId, findProduct } = require('../utils/common');
 /**
  * @description 상품 등록
  * @route POST /products
@@ -30,7 +19,7 @@ const postProduct = async (req, res) => {
       data: { name, description, price, tags, imageUrl },
     });
 
-    res.status(201).json({newProduct, message: "상품이 등록되었습니다."});
+    res.status(201).json({ newProduct, message: "상품이 등록되었습니다." });
   } catch (error) {
     handleError(res, error);
   }
@@ -47,7 +36,7 @@ const postProduct = async (req, res) => {
  */
 const getProduct = async (req, res) => {
   try {
-    const { offset, limit, order = 'recent', search = '' } = req.query;
+    const { offset = 0, limit = 10, order = 'recent', search = '' } = req.query;
     const skip = parseInt(offset, 10);
     const take = parseInt(limit, 10);
 
@@ -99,7 +88,6 @@ const getProductById = async (req, res) => {
  */
 const patchProduct = async (req, res) => {
   const productId = getValidatedId(req.validatedId);
-
   const { name, description, price, tags, imageUrl } = req.body;
 
   try {
@@ -131,7 +119,7 @@ const deleteProduct = async (req, res) => {
     // 상품 ID로 상품 조회
     const product = findProduct(productId, res);
     if (!product) return;
-    
+
     // 상품이 존재할 경우 삭제
     await db.product.delete({ where: { id: productId } });
     res.status(204).json({ message: '상품이 삭제되었습니다.' });

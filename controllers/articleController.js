@@ -1,16 +1,6 @@
 const { db } = require('../utils/db');
-const { getValidatedId } = require('../utils/common');
+const { getValidatedId, findArticle } = require('../utils/common');
 const { handleError } = require('../utils/error');
-
-// 게시글 존재 확인 유틸 함수
-const findArticle = async (id, res) => {
-  const article = await db.article.findUnique({ where: { id } });
-  if (!article) {
-    res.status(404).json({ error: '게시글이 존재하지 않습니다.' });
-    return null;
-  }
-  return article;
-};
 
 /**
  * @description 게시글 등록
@@ -23,7 +13,7 @@ const postArticle = async (req, res) => {
   const { title, content } = req.body;
   try {
     const newArticle = await db.article.create({ data: { title, content } });
-    res.status(201).json({ newArticle, message: "게시글이 등록 되었습니다." });
+    res.status(201).json({ newArticle, message: '게시글이 등록되었습니다.' });
   } catch (error) {
     handleError(res, error);
   }
