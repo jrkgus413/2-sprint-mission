@@ -1,6 +1,7 @@
 var createError = require('http-errors');
 var express = require('express');
 var logger = require('morgan');
+var cors = require('cors');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -9,6 +10,12 @@ var productsRouter = require('./routes/product');
 var commentsRouter = require('./routes/comment');
 
 var app = express();
+// CORS 설정
+app.use(cors({
+  origin: '*', // 모든 도메인 허용
+  methods: ['GET', 'POST', 'PATCH', 'DELETE'], // 허용할 HTTP 메소드
+  allowedHeaders: ['Content-Type', 'Authorization'] // 허용할 헤더
+}));
 
 app.use(logger('dev'));
 app.use(express.json());
