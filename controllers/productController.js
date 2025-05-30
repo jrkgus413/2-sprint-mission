@@ -49,6 +49,7 @@ const getProduct = async (req, res) => {
       orderBy: { createdAt: order === 'recent' ? 'desc' : 'asc' },
       skip,
       take,
+      select: { id: true, name: true, price: true, imageUrl: true, createdAt: true },
     });
 
     res.status(200).json({ products });

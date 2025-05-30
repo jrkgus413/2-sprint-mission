@@ -40,7 +40,8 @@ const getArticle = async (req, res) => {
       where,
       orderBy: order === 'recent' ? { createdAt: 'desc' } : { createdAt: 'asc' },
       skip,
-      take
+      take,
+      select: { id: true, title: true, content: true, createdAt: true },
     });
     res.status(200).json(articles);
   } catch (error) {

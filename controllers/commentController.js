@@ -62,7 +62,7 @@ const postProductComment = async (req, res) => {
       data: {
         content,
         productId: relationId
-      }
+      },
     })
     res.status(201).json({ comment, message: "댓글이 등록되었습니다." });
   } catch (error) {
@@ -75,8 +75,12 @@ const postProductComment = async (req, res) => {
  * @route GET /comments/article
  * 
  * @param {string} req.params.relationId - 게시글 ID
+ * @param {Object} req.query.cursor - 페이지네이션을 위한 커서
+ * @param {number} req.query.take - 조회할 댓글 수 (기본값: 10)
+ * 
  */
 const getArticleComments = async (req, res) => {
+  const { cursor, take = 10 } = req.query;
   const relationId = getValidatedId(req.validatedId);
 
   try {
@@ -87,18 +91,25 @@ const getArticleComments = async (req, res) => {
     // 게시글이 존재하는 경우 댓글 조회
     const comments = await db.comment.findMany({
       where: { articleId: relationId },
-      orderBy: { createdAt: 'desc' }
+      take: Number(take),
+      ...(cursor && { skip: 1, cursor: { id: Number(cursor) } }),
+      select: { id: true, content: true, createdAt: true },
     });
     res.status(200).json({ comments });
   } catch (error) {
     handleError(res, error);
-  } 1
+  }
 }
 /**
  * @description 상품 댓글 조회
  * @route GET /comments/product
+ * 
+ * @param {string} req.params.relationId - 게시글 ID
+ * @param {Object} req.query.cursor - 페이지네이션을 위한 커서
+ * @param {number} req.query.take - 조회할 댓글 수 (기본값: 10)
  */
 const getProductComments = async (req, res) => {
+  const { cursor, take = 10 } = req.query;
   const relationId = getValidatedId(req.validatedId);
 
   try {
@@ -108,8 +119,10 @@ const getProductComments = async (req, res) => {
 
     // 상품이 존재하는 경우 댓글 조회
     const comments = await db.comment.findMany({
-      where: { productId : product.id },
-      orderBy: { createdAt: 'desc' }
+      where: { productId: relationId },
+      take: Number(take),
+      ...(cursor && { skip: 1, cursor: { id: Number(cursor) } }),
+      select: { id: true, content: true, createdAt: true },
     });
     res.status(200).json({ comments });
   } catch (error) {
