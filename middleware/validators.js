@@ -26,6 +26,11 @@ const validateArticle = (req, res, next) => {
 
 // Product의 입력 값을 검증하는 미들웨어
 const validateProduct = (req, res, next) => {
+  // 타입 변환
+  if (typeof req.body.price === 'string') {
+    req.body.price = Number(req.body.price);
+  }
+
   try {
     assert(req.body, CreateProductDto);
   } catch (err) {

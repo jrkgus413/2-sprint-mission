@@ -36,7 +36,7 @@ const postProduct = async (req, res) => {
  */
 const getProduct = async (req, res) => {
   try {
-    const { offset = 0, limit = 10, order = 'recent', search = '' } = req.query;
+    const { offset, limit, order = 'recent', search = '' } = req.query;
     const skip = parseInt(offset, 10);
     const take = parseInt(limit, 10);
 
@@ -68,7 +68,7 @@ const getProductById = async (req, res) => {
   const productId = getValidatedId(req.validatedId);
 
   try {
-    const product = findProduct(productId, res);
+    const product = await findProduct(productId, res);
     if (!product) return;
     res.status(200).json(product);
   } catch (error) {
@@ -93,7 +93,7 @@ const patchProduct = async (req, res) => {
 
   try {
     // 상품이 존재하는지 확인
-    const product = findProduct(productId, res);
+    const product = await findProduct(productId, res);
     if (!product) return;
 
     // 상품이 존재할 경우 업데이트
@@ -118,7 +118,7 @@ const deleteProduct = async (req, res) => {
 
   try {
     // 상품 ID로 상품 조회
-    const product = findProduct(productId, res);
+    const product = await findProduct(productId, res);
     if (!product) return;
 
     // 상품이 존재할 경우 삭제
