@@ -31,6 +31,10 @@ app.use('/files', fileRouter);
 
 app.use('/uploads', express.static('uploads'));
 
+app.get("/", (req, res) => {
+  res.send("실행 완료");
+});
+
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
   next(createError(404));
