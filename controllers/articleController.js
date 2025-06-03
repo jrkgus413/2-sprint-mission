@@ -29,7 +29,7 @@ const postArticle = async (req, res) => {
  * @param {string} req.query.search - 검색어 (게시글 제목 또는 내용에 포함된 경우)
  */
 const getArticle = async (req, res) => {
-  const { offset, limit, order = 'recent', search = '' } = req.query;
+  const { offset = 0, limit = 10, 순서 = 'recent', 검색 = '' } = req.쿼리;
   try {
     const skip = parseInt(offset, 10);
     const take = parseInt(limit, 10);
