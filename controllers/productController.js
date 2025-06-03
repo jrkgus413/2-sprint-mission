@@ -36,7 +36,7 @@ const postProduct = async (req, res) => {
  */
 const getProduct = async (req, res) => {
   try {
-    const { offset, limit, order = 'recent', search = '' } = req.query;
+    const { offset = 0, limit = 10, order = 'recent', search = '' } = req.query;
     const skip = parseInt(offset, 10);
     const take = parseInt(limit, 10);
 
