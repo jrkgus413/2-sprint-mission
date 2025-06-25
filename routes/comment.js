@@ -11,17 +11,19 @@ const {
   deleteComment
 } = require('../controllers/commentController');
 
-router.route('/article/:relationId')
-  .all(validateParamId)
-  .get(getArticleComments)
-  .post(validateComment, postArticleComment);
+router.route('/')
+  .get((req, res, next) => {
+    if (req.commentType === 'articles') return getArticleComments(req, res);
+    if (req.commentType === 'products') return getProductComments(req, res);
+    next();
+  })
+  .post(validateComment, (req, res, next) => {
+    if (req.commentType === 'articles') return postArticleComment(req, res);
+    if (req.commentType === 'products') return postProductComment(req, res);
+    next();
+  });
 
-router.route('/product/:relationId')
-  .all(validateParamId)
-  .get(getProductComments)
-  .post(validateComment, postProductComment);
-
-router.route('/:id')
+router.route('/:commentId')
   .all(validateParamId)
   .patch(validateComment, patchComment)
   .delete(deleteComment);

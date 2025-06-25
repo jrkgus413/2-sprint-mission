@@ -6,7 +6,8 @@ const { CreateCommentDto } = require('../dtos/comment.dto');
 
 // 유효한 숫자 ID를 검증하는 미들웨어
 const validateParamId = (req, res, next) => {
-  const id = Number(req.params.id || req.params.relationId);
+  const id = Number(req.params.id || req.params.commentId);
+
   if (!id || isNaN(id)) {
     return handleError(res, null, '유효하지 않은 ID입니다.', 400);
   }
@@ -50,4 +51,4 @@ const validateComment = (req, res, next) => {
 }
 
 
-module.exports = {validateParamId, validateArticle, validateProduct, validateComment };
+module.exports = { validateParamId, validateArticle, validateProduct, validateComment };

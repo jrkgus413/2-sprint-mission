@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const commentsRouter = require('./comment');
 
 const { validateParamId, validateArticle } = require('../middleware/validators');
 const { getArticle, getArticleById, postArticle, patchArticle, deleteArticle } = require('../controllers/articleController');
@@ -13,5 +14,13 @@ router.route('/:id')
   .get(getArticleById)
   .patch(validateArticle, patchArticle)
   .delete(deleteArticle);
+
+// article 관련 comment router
+router.use(
+  '/:id/comments',
+  validateParamId,
+  (req, res, next) => {req.commentType = 'articles'; next(); },
+  commentsRouter
+);
 
 module.exports = router;

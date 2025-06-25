@@ -10,7 +10,6 @@ const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const articlesRouter = require('./routes/article');
 const productsRouter = require('./routes/product');
-const commentsRouter = require('./routes/comment');
 const fileRouter = require('./routes/file');
 
 // CORS 설정
@@ -27,7 +26,6 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/articles', articlesRouter);
 app.use('/products', productsRouter);
-app.use('/comments', commentsRouter);
 app.use('/files', fileRouter);
 
 app.use('/uploads', express.static('uploads'));
