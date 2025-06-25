@@ -1,16 +1,17 @@
-var createError = require('http-errors');
 const express = require('express');
-var logger = require('morgan');
-var cors = require('cors');
+const logger = require('morgan');
+const cors = require('cors');
+const { PORT } = require('./utils/const');
+
 // Express 앱 생성
-var app = express();
+const app = express();
 // 라우터 설정
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-var articlesRouter = require('./routes/article');
-var productsRouter = require('./routes/product');
-var commentsRouter = require('./routes/comment');
-var fileRouter = require('./routes/file');
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+const articlesRouter = require('./routes/article');
+const productsRouter = require('./routes/product');
+const commentsRouter = require('./routes/comment');
+const fileRouter = require('./routes/file');
 
 // CORS 설정
 app.use(cors({
@@ -49,5 +50,10 @@ app.use((err, req, res, next) => {
   // render the error page
   res.status(err.status || 500).json({error : err.message}); 
 });
+
+app.listen(PORT, () => {
+  console.log(`서버가 포트 ${PORT}에서 실행 중입니다.`);
+});
+
 
 module.exports = app;
