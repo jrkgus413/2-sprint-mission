@@ -3,10 +3,13 @@ const { handleError } = require('../utils/error');
 
 // 유효한 ID 확인
 const getValidatedId = (validatedId) => {
-  if (!validatedId) {
+  const validationId = Number(validatedId);
+
+  if (!validatedId || isNaN(validatedId)) {
     throw new Error('유효하지 않은 ID 입니다.');
   }
-  return validatedId;
+  
+  return validationId;
 };
 
 // 게시글 존재 여부 확인

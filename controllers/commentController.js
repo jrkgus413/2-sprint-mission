@@ -13,8 +13,8 @@ const findComment = async (commentId, res) => {
 }
 
 /**
- * @description 댓글 등록
- * @route POST /comments/article/:relationId
+ * @description 게시글 댓글 등록
+ * @route POST /articles/:id/comments
  * 
  * @param {string} req.params.relationId - 게시글 ID
  * @param {string} req.body.content - 댓글 내용
@@ -43,9 +43,9 @@ const postArticleComment = async (req, res) => {
 
 /**
  * @description 상품 댓글 등록
- * @route POST /comments/product/:relationId
+ * @route POST /products/:id/comments
  * 
- * @param {string} req.params.relationId - 상품 ID
+ * @param {string} req.params.id - 상품 ID
  * @param {string} req.body.content - 댓글 내용
  */
 const postProductComment = async (req, res) => {
@@ -72,7 +72,7 @@ const postProductComment = async (req, res) => {
 
 /**
  * @description 게시글 댓글 조회
- * @route GET /comments/article
+ * @route GET /articles/:id/comments
  * 
  * @param {string} req.params.relationId - 게시글 ID
  * @param {Object} req.query.cursor - 페이지네이션을 위한 커서
@@ -102,7 +102,7 @@ const getArticleComments = async (req, res) => {
 }
 /**
  * @description 상품 댓글 조회
- * @route GET /comments/product
+ * @route GET /products/:id/comments
  * 
  * @param {string} req.params.relationId - 게시글 ID
  * @param {Object} req.query.cursor - 페이지네이션을 위한 커서
@@ -132,7 +132,7 @@ const getProductComments = async (req, res) => {
 
 /**
  * @description 댓글 수정
- * @route PATCH /comments/:id
+ * @route PATCH :commetType/:id/comments/:commentId
  * 
  * @param {string} req.params.id - 댓글 ID
  * @param {string} req.body.content - 수정할 댓글 내용
@@ -158,7 +158,7 @@ const patchComment = async (req, res) => {
 }
 /**
  * @description 댓글 삭제
- * @route DELETE /comments/:id
+ * @route DELETE :commetType/:id/comments/:id
  * 
  * @param {string} req.params.id - 삭제할 댓글 ID
  */

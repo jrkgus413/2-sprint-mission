@@ -7,10 +7,7 @@ const { PORT } = require('./utils/const');
 const app = express();
 // 라우터 설정
 const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
-const articlesRouter = require('./routes/article');
-const productsRouter = require('./routes/product');
-const fileRouter = require('./routes/file');
+
 
 // CORS 설정
 app.use(cors({
@@ -23,11 +20,6 @@ app.use(logger('dev'));
 app.use(express.json());
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/articles', articlesRouter);
-app.use('/products', productsRouter);
-app.use('/files', fileRouter);
-
 app.use('/uploads', express.static('uploads'));
 
 app.get("/", (req, res) => {
