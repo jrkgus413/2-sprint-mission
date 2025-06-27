@@ -1,10 +1,12 @@
-const { string } = require("superstruct");
+const { string, optional, object } = require("superstruct");
 
-var CreateUserDto = {
+var CreateUserDto = object({
   email: string(),
   nickname: string(),
-  image: string(),
+  image: optional(string()),
   password: string(),
-}
+})
 
-module.exports = { CreateUserDto };
+module.exports = {
+  CreateUserDto
+};
