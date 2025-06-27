@@ -2,6 +2,7 @@
 const { db } = require('../utils/db');
 const { handleError } = require('../utils/error');
 const { getValidatedId } = require('../utils/common');
+const { hashPassword } = require('../utils/password');
 
 /** 
  * @description 사용자 Id를 통해 사용자 DB 정보 조회 
@@ -22,9 +23,10 @@ const findUserById = async (id) => {
 
   return userInfo;
 }
+
 /**
  * @description 사용자 정보 조회 
- * @route GET /article/:id/comments
+ * @route GET /users/:id
  *
  * @param {string} req.params.userId - 사용자 id
  */
@@ -33,15 +35,17 @@ const getUserInfo = async (req, res, next) => {
 
   try {
     const userInfo = await findUserById(id);
-    if (!userInfo) return handleError(res, null, "사용자가 존재하지 않습니다", 404);
-    res.status(500).json(userInfo);
+    if (!userInfo) return handleError(res, null, "사용자가 존재하지 않습니다.", 404);
+
+    const { password: _, ...userWithoutPassword } = userInfo;
+    res.status(200).json({ userWithoutPassword });
   } catch (error) {
-    handleError(res, error);
+    return handleError(res, error);
   }
 }
 /**
  * @description 사용자 정보 수정
- * @route GET /article/:id/comments
+ * @route GET /users/:id/
  *
  * @param {string} req.params.userId - 사용자 id
  * @param {string} req.body.email - 사용자 이메일
@@ -55,7 +59,7 @@ const patchUserInfo = async (req, res, next) => {
   try {
     const userInfo = await findUserById(id);
 
-    if (!userInfo) return handleError(res, null, "사용자가 존재하지 않습니다", 404);
+    if (!userInfo) return handleError(res, null, "사용자가 존재하지 않습니다.", 404);
 
     const updateUser = await db.user.update({
       where: { id },
@@ -64,23 +68,17 @@ const patchUserInfo = async (req, res, next) => {
         nickname,
         image
       },
-      select: {
-        id: true,
-        nickname: true,
-        email: true,
-        image: true,
-        password: false
-      }
     })
 
-    res.status(200).json(updateUser);
+    const { password: _, ...userWithoutPassword } = updateUser;
+    res.status(200).json({ userWithoutPassword });
   } catch (error) {
     return handleError(res, error);
   }
 }
 /**
  * @description 사용자 비밀번호 수정
- * @route GET /article/:id/comments
+ * @route GET /users/:id/password
  *
  * @param {string} req.params.userId - 사용자 id
  * @param {string} req.body.password - 사용자 비밀번호
@@ -91,14 +89,14 @@ const patchUserPassword = async (req, res, next) => {
 
   try {
     const userInfo = await findUserById(id);
-    if (!userInfo) return handleError(res, null, "사용자가 존재하지 않습니다", 404);
-    
+    if (!userInfo) return handleError(res, null, "사용자가 존재하지 않습니다.", 404);
+
     await db.user.update({
       where: { id },
-      data: { password },
+      data: { password : hashPassword(password) },
     })
 
-    res.status(200).json()
+    res.status(200).json({ msg: "비밀번호가 변경 되었습니다." })
   } catch (error) {
     return handleError(res, error);
   }
@@ -116,7 +114,7 @@ const getProductByUser = async (req, res, next) => {
   try {
     const userInfo = await findUserById(id);
 
-    if (!userInfo) return handleError(res, null, "사용자가 존재하지 않습니다", 404);
+    if (!userInfo) return handleError(res, null, "사용자가 존재하지 않습니다.", 404);
 
     const products = await db.product.findMany({
       where: {
