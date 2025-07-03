@@ -1,6 +1,7 @@
 const express = require('express');
 const logger = require('morgan');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const { PORT } = require('./utils/const');
 
 // Express 앱 생성
@@ -18,6 +19,7 @@ app.use(cors({
 
 app.use(logger('dev'));
 app.use(express.json());
+app.use(cookieParser()); // 쿠키 파서 미들웨어 추가
 
 app.use('/', indexRouter);
 app.use('/uploads', express.static('uploads'));

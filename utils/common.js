@@ -18,10 +18,7 @@ const findArticle = async (articleId, res) => {
     where: { id: parseInt(articleId, 10) },
     select: { id: true, title: true, content: true, createdAt: true }
   });
-  if (article === null) {
-    handleError(res, null, '게시글이 존재하지 않습니다.', 404);
-    return null;
-  }
+  
   return article;
 }
 
@@ -31,10 +28,7 @@ const findProduct = async (productId, res) => {
     where: { id: parseInt(productId, 10) },
     select: { id: true, name: true, price: true, imageUrl: true, createdAt: true }
   });
-  if (product === null) {
-    handleError(res, null, '상품이 존재하지 않습니다.', 404);
-    return null;
-  }
+
   return product;
 }
 

@@ -15,8 +15,19 @@ const postProduct = async (req, res) => {
   const { name, description, price, tags, imageUrl } = req.body;
 
   try {
+    if (!req.user) {
+      return handleError(res, null, '로그인이 필요합니다.', 401);
+    }
+
     const newProduct = await db.product.create({
-      data: { name, description, price, tags, imageUrl },
+      data: {
+        name,
+        description,
+        price,
+        tags,
+        imageUrl,
+        userId: req.user.id
+      },
     });
 
     res.status(201).json({ newProduct, message: "상품이 등록되었습니다." });
@@ -68,8 +79,10 @@ const getProductById = async (req, res) => {
   const productId = getValidatedId(req.validatedId);
 
   try {
+    // 상품 ID로 상품 조회
     const product = await findProduct(productId, res);
-    if (!product) return;
+    if (!product) return handleError(res, null, '상품이 존재하지 않습니다.', 404);
+
     res.status(200).json(product);
   } catch (error) {
     handleError(res, error);
@@ -92,9 +105,24 @@ const patchProduct = async (req, res) => {
   const { name, description, price, tags, imageUrl } = req.body;
 
   try {
+    if (!req.user) {
+      return handleError(res, null, '로그인이 필요합니다.', 401);
+    }
+
     // 상품이 존재하는지 확인
-    const product = await findProduct(productId, res);
-    if (!product) return;
+    const product = await db.product.findUnique({
+      where: { id: productId },
+      include: { user: true }
+    });
+
+    if (!product) {
+      return handleError(res, null, '상품이 존재하지 않습니다.', 404);
+    }
+
+    // 상품 등록자만 수정 가능
+    if (product.userId !== req.user.id) {
+      return handleError(res, null, '상품 수정 권한이 없습니다.', 403);
+    }
 
     // 상품이 존재할 경우 업데이트
     const updatedProduct = await db.product.update({
@@ -117,9 +145,24 @@ const deleteProduct = async (req, res) => {
   const productId = getValidatedId(req.validatedId);
 
   try {
+    if (!req.user) {
+      return handleError(res, null, '로그인이 필요합니다.', 401);
+    }
+
     // 상품 ID로 상품 조회
-    const product = await findProduct(productId, res);
-    if (!product) return;
+    const product = await db.product.findUnique({
+      where: { id: productId },
+      include: { user: true }
+    });
+
+    if (!product) {
+      return handleError(res, null, '상품이 존재하지 않습니다.', 404);
+    }
+
+    // 상품 등록자만 삭제 가능
+    if (product.userId !== req.user.id) {
+      return handleError(res, null, '상품 삭제 권한이 없습니다.', 403);
+    }
 
     // 상품이 존재할 경우 삭제
     await db.product.delete({ where: { id: productId } });

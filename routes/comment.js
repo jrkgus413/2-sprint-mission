@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const authenticate = require('../middleware/authenticate');
 
 const { validateParamId, validateComment } = require('../middleware/validators');
 const {
@@ -17,14 +18,14 @@ router.route('/')
     if (req.commentType === 'products') return getProductComments(req, res);
     next();
   })
-  .post(validateComment, (req, res, next) => {
+  .post(authenticate, validateComment, (req, res, next) => {
     if (req.commentType === 'articles') return postArticleComment(req, res);
     if (req.commentType === 'products') return postProductComment(req, res);
     next();
   });
 
 router.route('/:commentId')
-  .all(validateParamId)
+  .all(authenticate, validateParamId)
   .patch(validateComment, patchComment)
   .delete(deleteComment);
 
