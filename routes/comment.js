@@ -14,13 +14,13 @@ const {
 
 router.route('/')
   .get((req, res, next) => {
-    if (req.commentType === 'articles') return getArticleComments(req, res);
-    if (req.commentType === 'products') return getProductComments(req, res);
+    if (req.relationType === 'articles') return getArticleComments(req, res);
+    if (req.relationType === 'products') return getProductComments(req, res);
     next();
   })
   .post(authenticate, validateComment, (req, res, next) => {
-    if (req.commentType === 'articles') return postArticleComment(req, res);
-    if (req.commentType === 'products') return postProductComment(req, res);
+    if (req.relationType === 'articles') return postArticleComment(req, res);
+    if (req.relationType === 'products') return postProductComment(req, res);
     next();
   });
 

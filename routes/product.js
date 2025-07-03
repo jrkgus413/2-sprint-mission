@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const commentsRouter = require('./comment');
+const likeRouter = require('./like');
 
 const { validateParamId, validateProduct } = require('../middleware/validators');
 const { getProduct, getProductById, postProduct, patchProduct, deleteProduct } = require('../controllers/productController');
@@ -20,8 +21,16 @@ router.route('/:id')
 router.use(
   '/:id/comments',
   validateParamId,
-  (req, res, next) => { req.commentType = 'products'; next(); },
+  (req, res, next) => { req.relationType = 'products'; next(); },
   commentsRouter
+);
+
+// product 관련 like router
+router.use(
+  '/:id/like',
+  validateParamId,
+  (req, res, next) => { req.relationType = 'products'; next(); },
+  likeRouter
 );
 
 module.exports = router;
