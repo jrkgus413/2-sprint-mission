@@ -10,16 +10,7 @@ const { hashPassword } = require('../utils/password');
  * @param {string} id - 사용자 id
 */
 const findUserById = async (id) => {
-  const userInfo = await db.user.findUnique({
-    where: { id },
-    select: {
-      id: true,
-      nickname: true,
-      email: true,
-      image: true,
-      password: false
-    }
-  });
+  const userInfo = await db.user.findUnique({ where: { id } });
 
   return userInfo;
 }
@@ -38,7 +29,7 @@ const getUserInfo = async (req, res, next) => {
     if (!userInfo) return handleError(res, null, "사용자가 존재하지 않습니다.", 404);
 
     const { password: _, ...userWithoutPassword } = userInfo;
-    res.status(200).json({ userWithoutPassword });
+    res.status(200).json( userWithoutPassword );
   } catch (error) {
     return handleError(res, error);
   }
@@ -71,7 +62,7 @@ const patchUserInfo = async (req, res, next) => {
     })
 
     const { password: _, ...userWithoutPassword } = updateUser;
-    res.status(200).json({ userWithoutPassword });
+    res.status(200).json(userWithoutPassword);
   } catch (error) {
     return handleError(res, error);
   }
@@ -93,7 +84,7 @@ const patchUserPassword = async (req, res, next) => {
 
     await db.user.update({
       where: { id },
-      data: { password : hashPassword(password) },
+      data: { password: hashPassword(password) },
     })
 
     res.status(200).json({ msg: "비밀번호가 변경 되었습니다." })

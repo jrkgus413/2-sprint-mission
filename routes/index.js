@@ -1,14 +1,14 @@
 const express = require('express');
 const router = express.Router();
 
-const authRouter= require('./auth')
+const authRouter = require('./auth')
 const usersRouter = require('./users');
 const articlesRouter = require('./article');
 const productsRouter = require('./product');
 const fileRouter = require('./file');
 
 /* GET Health check */
-router.get('/', (req, res, next) => { res.send('OK');});
+router.get('/', (req, res, next) => { res.send('OK'); });
 /* auth 관련 라우터 */
 router.use('/auth', authRouter);
 /* users 관련 라우터 */

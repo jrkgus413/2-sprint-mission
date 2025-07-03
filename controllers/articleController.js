@@ -18,12 +18,12 @@ const postArticle = async (req, res) => {
       return handleError(res, null, '로그인이 필요합니다.', 401);
     }
 
-    const newArticle = await db.article.create({ 
-      data: { 
-        title, 
+    const newArticle = await db.article.create({
+      data: {
+        title,
         content,
-        userId: req.user.id 
-      } 
+        userId: req.user.id
+      }
     });
 
     res.status(201).json({ newArticle, message: '게시글이 등록되었습니다.' });
@@ -43,22 +43,22 @@ const postArticle = async (req, res) => {
  */
 const getArticle = async (req, res) => {
   const { offset = 0, limit = 10, order = 'recent', search = '' } = req.query;
-  
+
   try {
     const skip = parseInt(offset, 10);
     const take = parseInt(limit, 10);
     let where = search
       ? { OR: [{ title: { contains: search } }, { content: { contains: search } }] }
       : {};
-  
-      const articles = await db.article.findMany({
+
+    const articles = await db.article.findMany({
       where,
       orderBy: order === 'recent' ? { createdAt: 'desc' } : { createdAt: 'asc' },
       skip,
       take,
       select: { id: true, title: true, content: true, createdAt: true },
     });
-  
+
     res.status(200).json(articles);
   } catch (error) {
     handleError(res, error);
@@ -107,7 +107,7 @@ const patchArticle = async (req, res) => {
       where: { id: articleId },
       include: { user: true }
     });
-    
+
     // 게시글이 존재하는지 확인
     if (!article) {
       return handleError(res, null, '게시글이 존재하지 않습니다.', 404);
@@ -147,7 +147,7 @@ const deleteArticle = async (req, res) => {
       where: { id: articleId },
       include: { user: true }
     });
-    
+
     // 게시글이 존재하는지 확인
     if (!article) {
       return handleError(res, null, '게시글이 존재하지 않습니다.', 404);

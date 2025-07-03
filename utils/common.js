@@ -8,7 +8,7 @@ const getValidatedId = (validatedId) => {
   if (!validatedId || isNaN(validatedId)) {
     throw new Error('유효하지 않은 ID 입니다.');
   }
-  
+
   return validationId;
 };
 
@@ -18,7 +18,7 @@ const findArticle = async (articleId, res) => {
     where: { id: parseInt(articleId, 10) },
     select: { id: true, title: true, content: true, createdAt: true }
   });
-  
+
   return article;
 }
 

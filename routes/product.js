@@ -20,7 +20,7 @@ router.route('/:id')
 router.use(
   '/:id/comments',
   validateParamId,
-  (req, res,  next) => { req.commentType = 'products'; next(); },
+  (req, res, next) => { req.commentType = 'products'; next(); },
   commentsRouter
 );
 
