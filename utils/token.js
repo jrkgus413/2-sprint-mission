@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { JWT_ACESS_SECRET, JWT_REFRESH_SECRET, ACCESS_TOKEN_COOKIE_NAME, REFRESH_TOKEN_COOKIE_NAME } = require('./const');
+const { db } = require('./db');
 
 /**
  * @description JWT 토큰 생성 함수
@@ -12,6 +13,25 @@ const createToken = (user) => {
   const refeshToken = jwt.sign(payload, JWT_REFRESH_SECRET, { expiresIn: '7d' });
 
   return { accessToken, refeshToken };
+}
+
+/**
+ * @description JWT 토큰 갱신 함수
+ * @param {object} user 
+ */
+const refreshToken = async (req, res) => {
+  // 리프레시 토큰 조회
+  const refreshToken = res.cookie[REFRESH_TOKEN_COOKIE_NAME];
+  if (!refreshToken) return handleError(res, null, "인증 정보가 없습니다.", 401);
+
+  const { userId } = verifyRefreshToken(refreshToken);
+  const user = await db.user.findUnique({ where: { id: userId } });
+  if (!user) return handleError(res, null, "해당 사용자가 존재하지 않습니다.", 400);
+
+  const { accessToken, refeshToken: newRefreshToken } = createToken(user);
+  setTokenCookies(res, accessToken, newRefreshToken);
+  
+  res.status(200).json();
 }
 
 /**
@@ -53,6 +73,7 @@ const setCookie = (res, accessToken, refeshToken) => {
 
 module.exports = {
   createToken,
+  refreshToken,
   verifyAccessToken,
   verifyRefreshToken,
   setCookie
