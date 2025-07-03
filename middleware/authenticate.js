@@ -6,9 +6,7 @@ const authenticate = async (req, res, next) => {
   const accessToken = req.cookies[ACCESS_TOKEN_COOKIE_NAME];
   const refreshToken = req.cookies[REFRESH_TOKEN_COOKIE_NAME];
 
-  if (!accessToken || !refreshToken) {    
-    return handleError(res, null, "인증 정보가 없습니다.", 401);
-  }
+  if (!accessToken || !refreshToken) return handleError(res, null, "인증 정보가 없습니다.", 401);
 
   try {
     // Token 정보에서 userId 추출

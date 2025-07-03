@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { JWT_ACESS_SECRET, JWT_REFRESH_SECRET, ACCESS_TOKEN_COOKIE_NAME, REFRESH_TOKEN_COOKIE_NAME } = require('./const');
 const { db } = require('./db');
+const { handleError } = require('./error');
 
 /**
  * @description JWT 토큰 생성 함수
@@ -17,21 +18,26 @@ const createToken = (user) => {
 
 /**
  * @description JWT 토큰 갱신 함수
- * @param {object} user 
+ * @param {object} req - Express 요청 객체
+ * @param {object} res - Express 응답 객체
  */
 const refreshToken = async (req, res) => {
-  // 리프레시 토큰 조회
-  const refreshToken = res.cookie[REFRESH_TOKEN_COOKIE_NAME];
-  if (!refreshToken) return handleError(res, null, "인증 정보가 없습니다.", 401);
+  try {
+    // 리프레시 토큰 조회
+    const refreshToken = req.cookies[REFRESH_TOKEN_COOKIE_NAME];
+    if (!refreshToken) return handleError(res, null, "인증 정보가 없습니다.", 401);
 
-  const { userId } = verifyRefreshToken(refreshToken);
-  const user = await db.user.findUnique({ where: { id: userId } });
-  if (!user) return handleError(res, null, "해당 사용자가 존재하지 않습니다.", 400);
+    const { userId } = verifyRefreshToken(refreshToken);
+    const user = await db.user.findUnique({ where: { id: userId } });
+    if (!user) return handleError(res, null, "해당 사용자가 존재하지 않습니다.", 400);
 
-  const { accessToken, refeshToken: newRefreshToken } = createToken(user);
-  setTokenCookies(res, accessToken, newRefreshToken);
-  
-  res.status(200).json();
+    const { accessToken, refeshToken: newRefreshToken } = createToken(user);
+    setCookie(res, accessToken, newRefreshToken);
+
+    res.status(200).json({ message: "토큰이 갱신되었습니다." });
+  } catch (error) {
+    return handleError(res, null, "토큰 갱신에 실패했습니다.", 401);
+  }
 }
 
 /**

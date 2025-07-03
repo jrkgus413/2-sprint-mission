@@ -29,23 +29,23 @@ const getUserInfo = async (req, res, next) => {
     if (!userInfo) return handleError(res, null, "사용자가 존재하지 않습니다.", 404);
 
     const { password: _, ...userWithoutPassword } = userInfo;
-    res.status(200).json( userWithoutPassword );
+    res.status(200).json(userWithoutPassword);
   } catch (error) {
     return handleError(res, error);
   }
 }
 /**
  * @description 사용자 정보 수정
- * @route GET /users/:id/
+ * @route PATCH /users/:id/
  *
  * @param {string} req.params.userId - 사용자 id
  * @param {string} req.body.email - 사용자 이메일
- * @param {string} req.body.nickname - 서용자 닉네임
+ * @param {string} req.body.nickname - 사용자 닉네임
  * @param {string} req.body.image - 사용자 프로필 사진
  */
 const patchUserInfo = async (req, res, next) => {
   const id = getValidatedId(req.validatedId);
-  const { email, nickname, image } = req.params;
+  const { email, nickname, image } = req.body;
 
   try {
     const userInfo = await findUserById(id);
@@ -69,22 +69,24 @@ const patchUserInfo = async (req, res, next) => {
 }
 /**
  * @description 사용자 비밀번호 수정
- * @route GET /users/:id/password
+ * @route PATCH /users/:id/password
  *
  * @param {string} req.params.userId - 사용자 id
  * @param {string} req.body.password - 사용자 비밀번호
  */
 const patchUserPassword = async (req, res, next) => {
   const id = getValidatedId(req.validatedId);
-  const { password } = req.params;
+  const { password } = req.body;
 
   try {
     const userInfo = await findUserById(id);
     if (!userInfo) return handleError(res, null, "사용자가 존재하지 않습니다.", 404);
 
+    const hashedPassword = await hashPassword(password); // await 추가
+
     await db.user.update({
       where: { id },
-      data: { password: hashPassword(password) },
+      data: { password: hashedPassword },
     })
 
     res.status(200).json({ msg: "비밀번호가 변경 되었습니다." })

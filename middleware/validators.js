@@ -9,9 +9,7 @@ const { CreateUserDto } = require("../dtos/user.dto");
 const validateParamId = (req, res, next) => {
   const id = Number(req.params.id || req.params.commentId);
 
-  if (!id || isNaN(id)) {
-    return handleError(res, null, '유효하지 않은 ID입니다.', 400);
-  }
+  if (!id || isNaN(id)) return handleError(res, null, '유효하지 않은 ID입니다.', 400);
   req.validatedId = id;
 
   next();

@@ -25,9 +25,7 @@ const postArticleComment = async (req, res) => {
 
   try {
     // 로그인 여부 확인
-    if (!req.user) {
-      return handleError(res, null, '로그인이 필요합니다.', 401);
-    }
+    if (!req.user) return handleError(res, null, '로그인이 필요합니다.', 401);
 
     // 게시글 ID로 게시글 조회
     const article = await findArticle(relationId, res);
@@ -60,9 +58,7 @@ const postProductComment = async (req, res) => {
 
   try {
     // 로그인 여부 확인
-    if (!req.user) {
-      return handleError(res, null, '로그인이 필요합니다.', 401);
-    }
+    if (!req.user) return handleError(res, null, '로그인이 필요합니다.', 401);
 
     // 상품 ID로 게시글 조회
     const product = await findProduct(relationId, res);
@@ -157,23 +153,16 @@ const patchComment = async (req, res) => {
 
   try {
     // 로그인 여부 확인
-    if (!req.user) {
-      return handleError(res, null, '로그인이 필요합니다.', 401);
-    }
+    if (!req.user) return handleError(res, null, '로그인이 필요합니다.', 401);
 
     // 댓글 ID로 댓글 조회
     const comment = await findComment(commentId);
 
     // 댓글이 존재하는지 확인
-    if (!comment) {
-      return handleError(res, null, '댓글이 존재하지 않습니다.', 404);
-    }
-
+    if (!comment) return handleError(res, null, '댓글이 존재하지 않습니다.', 404);
 
     // 댓글 작성자만 수정 가능
-    if (comment.userId !== req.user.id) {
-      return handleError(res, null, '댓글 수정 권한이 없습니다.', 403);
-    }
+    if (comment.userId !== req.user.id) return handleError(res, null, '댓글 수정 권한이 없습니다.', 403);
 
     // 댓글이 존재하는 경우 수정
     const updatedComment = await db.comment.update({
@@ -196,22 +185,16 @@ const deleteComment = async (req, res) => {
 
   try {
     // 로그인 여부 확인
-    if (!req.user) {
-      return handleError(res, null, '로그인이 필요합니다.', 401);
-    }
+    if (!req.user) return handleError(res, null, '로그인이 필요합니다.', 401);
 
     // 댓글 ID로 댓글 조회
     const comment = await findComment(commentId);
 
     // 댓글이 존재하는지 확인
-    if (!comment) {
-      return handleError(res, null, '댓글이 존재하지 않습니다.', 404);
-    }
+    if (!comment) return handleError(res, null, '댓글이 존재하지 않습니다.', 404);
 
     // 댓글 작성자만 삭제 가능
-    if (comment.userId !== req.user.id) {
-      return handleError(res, null, '댓글 삭제 권한이 없습니다.', 403);
-    }
+    if (comment.userId !== req.user.id) return handleError(res, null, '댓글 삭제 권한이 없습니다.', 403);
 
     // 댓글이 존재하는 경우 삭제
     await db.comment.delete({ where: { id: commentId } });
