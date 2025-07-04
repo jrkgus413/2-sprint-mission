@@ -87,9 +87,9 @@ const patchUserPassword = async (req, res, next) => {
     await db.user.update({
       where: { id },
       data: { password: hashedPassword },
-    })
+    });
 
-    res.status(200).json({ msg: "비밀번호가 변경 되었습니다." })
+    res.status(200).json({ msg: "비밀번호가 변경 되었습니다." });
   } catch (error) {
     return handleError(res, error);
   }
@@ -113,9 +113,124 @@ const getProductByUser = async (req, res, next) => {
       where: {
         userId: id,
       }
+    });
+
+    res.status(200).json(products);
+  } catch (error) {
+    return handleError(res, error);
+  }
+}
+
+/**
+ * @description 자신이 등록한 상품 목록 조회
+ * @route GET /users/:id/products
+ *
+ * @param {string} req.params.userId - 사용자 id
+ */
+const getArticleByUser = async (req, res, next) => {
+  const id = getValidatedId(req.validatedId);
+
+  try {
+    const userInfo = await findUserById(id);
+
+    if (!userInfo) return handleError(res, null, "사용자가 존재하지 않습니다.", 404);
+
+    const articles = await db.article.findMany({
+      where: {
+        userId: id,
+      }
+    });
+
+
+    res.status(200).json(articles);
+  } catch (error) {
+    return handleError(res, error);
+  }
+}
+
+/**
+ * @description 좋아요한 상품 목록 조회 가능
+ * @route GET /users/:id/like-products
+ *
+ * @param {string} req.params.userId - 사용자 id
+ */
+const getLikeProductByUser = async (req, res, next) => {
+  const id = getValidatedId(req.validatedId);
+
+  try {
+    const userInfo = await findUserById(id);
+
+    if (!userInfo) return handleError(res, null, "사용자가 존재하지 않습니다.", 404);
+
+    const likes = await db.like.findMany({
+      where: {
+        userId: id,
+        productId: {
+          not: null, // 상품에 대한 좋아요만 조회
+        }
+      },
+      include: {
+        product: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                nickname: true,
+                image: true
+              }
+            }
+          }
+        },
+      },
     })
 
-    res.status(200).json(products)
+    const likeProducts = likes.map(like => like.product); // 상품 정보만 추출
+
+    res.status(200).json(likeProducts);
+  } catch (error) {
+    return handleError(res, error);
+  }
+}
+
+/**
+ * @description 좋아요한 게시글 목록 조회 가능
+ * @route GET /users/:id/like-products
+ *
+ * @param {string} req.params.userId - 사용자 id
+ */
+const getLikeArticleByUser = async (req, res, next) => {
+  const id = getValidatedId(req.validatedId);
+
+  try {
+    const userInfo = await findUserById(id);
+
+    if (!userInfo) return handleError(res, null, "사용자가 존재하지 않습니다.", 404);
+
+    const likes = await db.like.findMany({
+      where: {
+        userId: id,
+        articleId: {
+          not: null, // 게시글에 대한 좋아요만 조회
+        }
+      },
+      include: {
+        article: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                nickname: true,
+                image: true
+              }
+            }
+          }
+        },
+      },
+    })
+
+    const likeArticles = likes.map(like => like.article); // 상품 정보만 추출
+
+    res.status(200).json(likeArticles);
   } catch (error) {
     return handleError(res, error);
   }
@@ -125,5 +240,8 @@ module.exports = {
   getUserInfo,
   patchUserInfo,
   patchUserPassword,
-  getProductByUser
+  getArticleByUser,
+  getProductByUser,
+  getLikeProductByUser,
+  getLikeArticleByUser
 }

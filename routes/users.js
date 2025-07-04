@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { validateParamId } = require('../middleware/validators');
-const { patchUserPassword, getProductByUser, patchUserInfo, getUserInfo } = require('../controllers/userController');
+const { patchUserPassword, getProductByUser, patchUserInfo, getUserInfo, getLikeProductByUser, getLikeArticleByUser, getArticleByUser } = require('../controllers/userController');
 
 router.route('/:id')
   .all(validateParamId)
@@ -14,6 +14,18 @@ router.route('/:id/password')
 
 router.route('/:id/products')
   .all(validateParamId)
-  .patch(getProductByUser);
+  .get(getProductByUser);
+
+router.route('/:id/articles')
+  .all(validateParamId)
+  .get(getArticleByUser);
+
+router.route('/:id/like-products')
+  .all(validateParamId)
+  .get(getLikeProductByUser);
+
+router.route('/:id/like-articles')
+  .all(validateParamId)
+  .get(getLikeArticleByUser);
 
 module.exports = router;
