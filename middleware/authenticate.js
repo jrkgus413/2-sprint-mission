@@ -1,5 +1,6 @@
 const { db } = require("../utils/db");
 const { verifyAccessToken } = require("../utils/token");
+const { handleError } = require("../utils/error");
 const { ACCESS_TOKEN_COOKIE_NAME, REFRESH_TOKEN_COOKIE_NAME } = require("../utils/const");
 
 const authenticate = async (req, res, next) => {

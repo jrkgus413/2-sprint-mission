@@ -2,6 +2,7 @@ const { db } = require("../utils/db");
 const { handleError } = require("../utils/error");
 const { hashPassword, comparePassword } = require("../utils/password");
 const { createToken, setCookie } = require("../utils/token");
+const { ACCESS_TOKEN_COOKIE_NAME, REFRESH_TOKEN_COOKIE_NAME } = require("../utils/const");
 
 /**
  * @description 사용자 회원가입
@@ -74,6 +75,10 @@ const login = async (req, res, next) => {
  */
 const logout = async (req, res, next) => {
   try {
+    // 쿠키 삭제
+    res.clearCookie(ACCESS_TOKEN_COOKIE_NAME);
+    res.clearCookie(REFRESH_TOKEN_COOKIE_NAME);
+
     res.status(200).json({ msg: "로그아웃이 완료 되었습니다." });
   } catch (error) {
     return handleError(res, error);
