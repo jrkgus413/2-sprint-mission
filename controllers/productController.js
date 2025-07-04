@@ -58,10 +58,43 @@ const getProduct = async (req, res) => {
       orderBy: { createdAt: order === 'recent' ? 'desc' : 'asc' },
       skip,
       take,
-      select: { id: true, name: true, price: true, imageUrl: true, createdAt: true },
+      // select: { id: true, name: true, price: true, imageUrl: true, createdAt: true },
+      include: {
+        user: {
+          select: { id: true, nickname: true, image: true } // 작성자 정보 포함
+        },
+        _count: {
+          select: { isLiked: true } // 좋아요 수 포함
+        }
+      }
     });
 
-    res.status(200).json({ products });
+    // 현재 로그인한 사용자의 좋아요 정보 조회
+    let userLikes = [];
+    if (req.user) {
+      userLikes = await db.like.findMany({
+        where: {
+          userId: req.user.id,
+          productId: { in: products.map(p => p.id) }
+        }
+      });
+    }
+
+    const formattedProducts = products.map(product => {
+      const isLiked = userLikes.some(like => like.productId === product.id);
+      return {
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        imageUrl: product.imageUrl,
+        createdAt: product.createdAt,
+        nickname: product.user.nickname, // 작성자 닉네임
+        likeCount: product._count.isLiked, // 좋아요 수
+        isLiked: isLiked // 현재 사용자의 좋아요 상태
+      };
+    });
+
+    res.status(200).json(formattedProducts);
   } catch (error) {
     handleError(res, error);
   }
@@ -81,7 +114,31 @@ const getProductById = async (req, res) => {
     const product = await findProduct(productId, res);
     if (!product) return handleError(res, null, '상품이 존재하지 않습니다.', 404);
 
-    res.status(200).json(product);
+    // 현재 로그인한 사용자가 이 상품에 좋아요를 눌렀는지 확인
+    let isLiked = false;
+    if (req.user) {
+      const like = await db.like.findFirst({
+        where: {
+          productId: productId,
+          userId: req.user.id
+        }
+      });
+      isLiked = !!like;
+    }
+
+    // 상품 정보에 좋아요 수 포함
+    const formattedProduct = {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      imageUrl: product.imageUrl,
+      createdAt: product.createdAt,
+      nickname: product.user.nickname, // 작성자 닉네임
+      likeCount: product._count.isLiked, // 좋아요 수
+      isLiked: isLiked // 현재 사용자의 좋아요 상태
+    };
+
+    res.status(200).json(formattedProduct);
   } catch (error) {
     handleError(res, error);
   }

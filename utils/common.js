@@ -16,7 +16,14 @@ const getValidatedId = (validatedId) => {
 const findArticle = async (articleId, res) => {
   const article = await db.article.findUnique({
     where: { id: parseInt(articleId, 10) },
-    select: { id: true, title: true, content: true, createdAt: true }
+    include: {
+      user: {
+        select: { id: true, nickname: true, image: true } // 작성자 정보 포함
+      },
+      _count: {
+        select: { isLiked: true } // 좋아요 수 포함
+      }
+    }
   });
 
   return article;
@@ -26,7 +33,15 @@ const findArticle = async (articleId, res) => {
 const findProduct = async (productId, res) => {
   const product = await db.product.findUnique({
     where: { id: parseInt(productId, 10) },
-    select: { id: true, name: true, price: true, imageUrl: true, createdAt: true }
+    // select: { id: true, name: true, price: true, imageUrl: true, createdAt: true },
+    include: {
+      user: {
+        select: { id: true, nickname: true, image: true } // 작성자 정보 포함
+      },
+      _count: {
+        select: { isLiked: true } // 좋아요 수 포함
+      }
+    }
   });
 
   return product;

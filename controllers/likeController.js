@@ -38,7 +38,7 @@ const toggleLike = async (req, res) => {
     if (!req.user) return handleError(res, null, '로그인이 필요합니다.', 401);
 
     const isLiked = await findIsLiked(req);
-
+    // 좋아요 상태에 따라 추가 또는 취소
     if (!isLiked) {
       // 좋아요 추가 로직
       await db.like.create({

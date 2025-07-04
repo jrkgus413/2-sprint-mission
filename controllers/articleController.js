@@ -56,10 +56,42 @@ const getArticle = async (req, res) => {
       orderBy: order === 'recent' ? { createdAt: 'desc' } : { createdAt: 'asc' },
       skip,
       take,
-      select: { id: true, title: true, content: true, createdAt: true },
+      include: {
+        user: {
+          select: { id: true, nickname: true, image: true } // 작성자 정보 포함
+        },
+        _count: {
+          select: { isLiked: true } // 좋아요 수 포함
+        }
+      }
     });
 
-    res.status(200).json(articles);
+    // 현재 로그인한 사용자의 좋아요 정보 조회
+    let userLikes = [];
+    if (req.user) {
+      userLikes = await db.like.findMany({
+        where: {
+          userId: req.user.id,
+          articleId: { in: articles.map(a => a.id) }
+        }
+      });
+    }
+
+    // 게시글 목록에 좋아요 상태 추가
+    const formattedArticles = articles.map(article => {
+      const isLiked = userLikes.some(like => like.articleId === article.id);
+      return {
+        id: article.id,
+        title: article.title,
+        content: article.content,
+        createdAt: article.createdAt,
+        nickname: article.user.nickname, // 작성자 닉네임
+        likeCount: article._count.isLiked, // 좋아요 수
+        isLiked: isLiked // 현재 사용자의 좋아요 상태
+      };
+    });
+
+    res.status(200).json(formattedArticles);
   } catch (error) {
     handleError(res, error);
   }
@@ -79,7 +111,30 @@ const getArticleById = async (req, res) => {
     const article = await findArticle(articleId, res);
     if (!article) return handleError(res, null, '게시글이 존재하지 않습니다.', 404);
 
-    res.status(200).json(article);
+    // 현재 로그인한 사용자가 이 게시글에 좋아요를 눌렀는지 확인
+    let isLiked = false;
+    if (req.user) {
+      const like = await db.like.findFirst({
+        where: {
+          articleId: articleId,
+          userId: req.user.id
+        }
+      });
+      isLiked = !!like;
+    }
+
+    // 게시글 정보에 댓글 수와 좋아요 수 포함
+    const formattedArticle = {
+      id: article.id,
+      title: article.title,
+      content: article.content,
+      createdAt: article.createdAt,
+      nickname: article.user.nickname, // 작성자 닉네임
+      likeCount: article._count.isLiked, // 좋아요 수
+      isLiked: isLiked // 현재 사용자의 좋아요 상태
+    };
+
+    res.status(200).json(formattedArticle);
   } catch (error) {
     handleError(res, error);
   }
