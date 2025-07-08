@@ -1,5 +1,6 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
+const authenticate = require('../middleware/authenticate');
 
 const { validateParamId, validateComment } = require('../middleware/validators');
 const {
@@ -11,18 +12,20 @@ const {
   deleteComment
 } = require('../controllers/commentController');
 
-router.route('/article/:relationId')
-  .all(validateParamId)
-  .get(getArticleComments)
-  .post(validateComment, postArticleComment);
+router.route('/')
+  .get((req, res, next) => {
+    if (req.relationType === 'articles') return getArticleComments(req, res);
+    if (req.relationType === 'products') return getProductComments(req, res);
+    next();
+  })
+  .post(authenticate, validateComment, (req, res, next) => {
+    if (req.relationType === 'articles') return postArticleComment(req, res);
+    if (req.relationType === 'products') return postProductComment(req, res);
+    next();
+  });
 
-router.route('/product/:relationId')
-  .all(validateParamId)
-  .get(getProductComments)
-  .post(validateComment, postProductComment);
-
-router.route('/:id')
-  .all(validateParamId)
+router.route('/:commentId')
+  .all(authenticate, validateParamId)
   .patch(validateComment, patchComment)
   .delete(deleteComment);
 

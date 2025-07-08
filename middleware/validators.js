@@ -3,14 +3,26 @@ const { handleError } = require("../utils/error");
 const { CreateArticleDto } = require("../dtos/article.dto");
 const { CreateProductDto } = require('../dtos/product.dto');
 const { CreateCommentDto } = require('../dtos/comment.dto');
+const { CreateUserDto } = require("../dtos/user.dto");
 
 // 유효한 숫자 ID를 검증하는 미들웨어
 const validateParamId = (req, res, next) => {
-  const id = Number(req.params.id || req.params.relationId);
-  if (!id || isNaN(id)) {
-    return handleError(res, null, '유효하지 않은 ID입니다.', 400);
-  }
+  const id = Number(req.params.id || req.params.commentId);
+
+  if (!id || isNaN(id)) return handleError(res, null, '유효하지 않은 ID입니다.', 400);
   req.validatedId = id;
+
+  next();
+};
+
+// User의 입력 값을 검증하는 미들웨어
+const validateUser = (req, res, next) => {
+  try {
+    console.log(req.body);
+    assert(req.body, CreateUserDto);
+  } catch (err) {
+    return handleError(res, err, '유효하지 않은 입력 값입니다.', 400);
+  }
   next();
 };
 
@@ -50,4 +62,10 @@ const validateComment = (req, res, next) => {
 }
 
 
-module.exports = {validateParamId, validateArticle, validateProduct, validateComment };
+module.exports = {
+  validateParamId,
+  validateUser,
+  validateArticle,
+  validateProduct,
+  validateComment
+};

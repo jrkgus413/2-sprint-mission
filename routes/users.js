@@ -1,9 +1,31 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
+const { validateParamId } = require('../middleware/validators');
+const { patchUserPassword, getProductByUser, patchUserInfo, getUserInfo, getLikeProductByUser, getLikeArticleByUser, getArticleByUser } = require('../controllers/userController');
 
-/* GET users listing. */
-router.get('/', (req, res, next) => {
-  res.send('respond with a resource');
-});
+router.route('/:id')
+  .all(validateParamId)
+  .get(getUserInfo)
+  .patch(patchUserInfo);
+
+router.route('/:id/password')
+  .all(validateParamId)
+  .patch(patchUserPassword);
+
+router.route('/:id/products')
+  .all(validateParamId)
+  .get(getProductByUser);
+
+router.route('/:id/articles')
+  .all(validateParamId)
+  .get(getArticleByUser);
+
+router.route('/:id/like-products')
+  .all(validateParamId)
+  .get(getLikeProductByUser);
+
+router.route('/:id/like-articles')
+  .all(validateParamId)
+  .get(getLikeArticleByUser);
 
 module.exports = router;

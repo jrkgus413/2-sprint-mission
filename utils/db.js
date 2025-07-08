@@ -1,4 +1,4 @@
-var Prisma = require('../generated/prisma');
-var db = new Prisma.PrismaClient();
+const Prisma = require('../generated/prisma');
+const db = new Prisma.PrismaClient();
 
 module.exports = { db };

@@ -1,16 +1,14 @@
-var createError = require('http-errors');
 const express = require('express');
-var logger = require('morgan');
-var cors = require('cors');
+const logger = require('morgan');
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
+const { PORT } = require('./utils/const');
+
 // Express 앱 생성
-var app = express();
+const app = express();
 // 라우터 설정
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-var articlesRouter = require('./routes/article');
-var productsRouter = require('./routes/product');
-var commentsRouter = require('./routes/comment');
-var fileRouter = require('./routes/file');
+const indexRouter = require('./routes/index');
+
 
 // CORS 설정
 app.use(cors({
@@ -21,14 +19,9 @@ app.use(cors({
 
 app.use(logger('dev'));
 app.use(express.json());
+app.use(cookieParser()); // 쿠키 파서 미들웨어 추가
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/articles', articlesRouter);
-app.use('/products', productsRouter);
-app.use('/comments', commentsRouter);
-app.use('/files', fileRouter);
-
 app.use('/uploads', express.static('uploads'));
 
 app.get("/", (req, res) => {
@@ -47,7 +40,12 @@ app.use((err, req, res, next) => {
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
   // render the error page
-  res.status(err.status || 500).json({error : err.message}); 
+  res.status(err.status || 500).json({ error: err.message });
 });
+
+app.listen(PORT, () => {
+  console.log(`서버가 포트 ${PORT}에서 실행 중입니다.`);
+});
+
 
 module.exports = app;
