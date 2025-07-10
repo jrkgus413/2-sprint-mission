@@ -19,3 +19,9 @@
 ### Sprint 4
 - 유저 기능과 인증 시스템의 이해
 - Express 유저 기능 구현
+
+### Sprint 5
+- TypeScript 기본기
+- TypeScript 적용 및 유효성 검사
+- RESTful API 설계 및 문서화
+- 코드레벨 아키텍처 및 디자인 패턴
