@@ -2,8 +2,12 @@
   "name": "2-sprint-mission",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "start": "node app.js",
+    "build": "tsc",
+    "start": "node dist/app.js",
+    "dev": "ts-node src/app.ts",
+    "dev:watch": "nodemon --watch src --ext ts --exec ts-node src/app.ts",
     "seed": "node prisma/seed.js"
   },
   "dependencies": {
@@ -21,5 +25,20 @@
     "morgan": "~1.9.1",
     "multer": "^2.0.0",
     "superstruct": "^2.0.2"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/cookie-parser": "^1.4.9",
+    "@types/cors": "^2.8.19",
+    "@types/debug": "^4.1.12",
+    "@types/express": "^5.0.3",
+    "@types/http-errors": "^2.0.5",
+    "@types/jade": "^0.0.34",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/morgan": "^1.9.10",
+    "@types/multer": "^2.0.0",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
   }
 }
