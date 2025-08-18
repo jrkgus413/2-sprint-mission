@@ -23,39 +23,40 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  product Product[]
-  article Article[]
-  comment Comment[]
-  isLiked Like[]
+  product      Product[]
+  article      Article[]
+  comment      Comment[]
+  isLiked      Like[]
+  notification Notification[]
 }
 
 model Product {
-  id          Int       @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   name        String
   description String?
   price       Float
   tags        String[]
   imageUrl    String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  comments    Comment[]
-  isLiked     Like[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  userId Int?
-  user   User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comments Comment[]
+  isLiked  Like[]
+  userId   Int?
+  user     User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Article {
-  id        Int       @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   title     String
   content   String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  comments  Comment[]
-  isLiked   Like[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  userId Int?
-  user   User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comments Comment[]
+  isLiked  Like[]
+  userId   Int?
+  user     User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Comment {
@@ -72,9 +73,9 @@ model Comment {
 }
 
 model Like {
-  id Int @id @default(autoincrement())
+  id     Int  @id @default(autoincrement())
+  userId Int?
 
-  userId    Int?
   user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
   articleId Int?
   article   Article? @relation(fields: [articleId], references: [id], onDelete: Cascade)
@@ -84,4 +85,15 @@ model Like {
   // 중복 좋아요 방지를 위한 복합 유니크 제약조건
   @@unique([userId, articleId], name: "unique_user_article_like")
   @@unique([userId, productId], name: "unique_user_product_like")
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  type      String
+  message   String?
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
