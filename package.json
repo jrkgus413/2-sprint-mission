@@ -24,6 +24,7 @@
     "jsonwebtoken": "^9.0.2",
     "morgan": "~1.9.1",
     "multer": "^2.0.0",
+    "socket.io": "^4.8.1",
     "superstruct": "^2.0.2"
   },
   "devDependencies": {
