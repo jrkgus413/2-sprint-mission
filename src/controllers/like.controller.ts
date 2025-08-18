@@ -9,9 +9,7 @@ export class LikeController {
    * @description 좋아요 추가 또는 취소
    * @route POST :relationType/:id/like
    * 
-   * @param {Object} req - 요청 객체
-   * @param {Object} res - 응답 객체
-  */
+   */
   static async toggleLike(req: Request, res: Response) {
     // DTO 생성
     const likeDto: LikeDto = {

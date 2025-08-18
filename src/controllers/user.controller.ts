@@ -36,10 +36,10 @@ export default class UserController {
   /**
    * @description 사용자 비밀번호 수정
    * @route PATCH /users/:id/password
-  *
-  * @param {string} req.params.userId - 사용자 id
-  * @param {string} req.body.password - 사용자 비밀번호
-  */
+   *
+   * @param {string} req.params.userId - 사용자 id
+   * @param {string} req.body.password - 사용자 비밀번호
+   */
   static async patchUserPassword(req: Request, res: Response) {
     const id = getValidatedId(req.validatedId!);
     const { password } = req.body;
@@ -52,9 +52,9 @@ export default class UserController {
   /**
    * @description 자신이 등록한 상품 목록 조회
    * @route GET /users/:id/products
-  *
-  * @param {string} req.params.userId - 사용자 id
-  */
+   *
+   * @param {string} req.params.userId - 사용자 id
+   */
   static async getProductByUser(req: Request, res: Response) {
     const id = getValidatedId(req.validatedId!);
     const products = await UserService.getProductByUser(id);
@@ -65,9 +65,9 @@ export default class UserController {
   /**
    * @description 자신이 등록한 게시글 목록 조회
    * @route GET /users/:id/articles
-  *
-  * @param {string} req.params.userId - 사용자 id
-  */
+   *
+   * @param {string} req.params.userId - 사용자 id
+   */
   static async getArticleByUser(req: Request, res: Response) {
     const id = getValidatedId(req.validatedId!);
     const articles = await UserService.getArticleByUser(id);
@@ -78,9 +78,9 @@ export default class UserController {
   /**
    * @description 좋아요한 상품 목록 조회 가능
    * @route GET /users/:id/like-products
-  *
-  * @param {string} req.params.userId - 사용자 id
-  */
+   *
+   * @param {string} req.params.userId - 사용자 id
+   */
   static async getLikeProductByUser(req: Request, res: Response) {
     const id = getValidatedId(req.validatedId!);
     const likeProducts = await UserService.getLikeProductByUser(id);
@@ -91,9 +91,9 @@ export default class UserController {
   /**
    * @description 좋아요한 게시글 목록 조회 가능
    * @route GET /users/:id/like-products
-  *
-  * @param {string} req.params.userId - 사용자 id
-  */
+   *
+   * @param {string} req.params.userId - 사용자 id
+   */
   static async getLikeArticleByUser(req: Request, res: Response) {
     const id = getValidatedId(req.validatedId!);
     const likeArticles = await UserService.getLikeArticleByUser(id);
