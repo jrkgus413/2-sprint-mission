@@ -2,11 +2,10 @@
   "name": "2-sprint-mission",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
   "scripts": {
     "build": "tsc",
     "start": "node dist/app.js",
-    "dev": "ts-node src/app.ts",
+    "dev": "npx ts-node --files src/app.ts",
     "dev:watch": "nodemon --watch src --ext ts --exec ts-node src/app.ts",
     "seed": "node prisma/seed.js"
   },
