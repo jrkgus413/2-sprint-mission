@@ -3,6 +3,8 @@ import LikeRepository from "../repositories/like.repository";
 import ProductRepository from "../repositories/product.repository";
 import { LikeResponseType } from "../types/like.types";
 import { AuthenticationError, NotFoundError } from "../utils/error";
+import { sendNotification } from "../utils/socket";
+import NotificationService from "./notification.service";
 
 export default class ProductService {
   /**
@@ -85,15 +87,24 @@ export default class ProductService {
    */
   static async patchProduct({ body, productId, userId }: { body: UpdateProductDto, productId: number, userId: number | null, }) {
     // 로그인 여부 확인
-    if (!userId) throw new AuthenticationError("상품 삭제 권한이 없습니다.");
+    if (!userId) throw new AuthenticationError("로그인이 필요합니다.");
 
     // 상품이 존재하는지 확인
     const product = await ProductRepository.getProductById(productId);
-
-    if (!product) throw new NotFoundError("로그인이 필요합니다.");
+    if (!product) throw new NotFoundError("해당 상품을 찾을 수 없습니다.");
 
     // 상품 등록자만 수정 가능
     if (product.userId !== userId) throw new AuthenticationError("상품 수정 권한이 없습니다.");
+
+    const likedUsers = await LikeRepository.getProductLikes({ productId });
+    const oldPrice = product.price;
+
+    if (body.price && oldPrice >= body.price) {
+      for (const user of likedUsers) {
+        const notification = await NotificationService.postNotification(user.id, `상품 ${product.name}의 가격이 변경되었습니다.`, "price_change");
+        sendNotification(user.id, notification); // 소켓 알림 추가
+      }
+    }
     return await ProductRepository.patchProduct({ productId, body });
   }
 
@@ -102,7 +113,7 @@ export default class ProductService {
      */
   static async deleteProduct({ userId, productId }: { userId: number | null; productId: number }) {
     // 로그인 여부 확인
-    if (!userId) throw new AuthenticationError("상품 삭제 권한이 없습니다.");
+    if (!userId) throw new AuthenticationError("로그인이 필요합니다.");
 
     // 상품 ID로 상품 조회
     const product = await ProductRepository.getProductById(productId);

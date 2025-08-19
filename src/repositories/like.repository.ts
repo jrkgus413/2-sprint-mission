@@ -87,30 +87,49 @@ export default class LikeRepository {
     });
   }
 
-   /**
-   * @description 좋아요한 게시글 목록 조회 가능
-   */
+  /**
+  * @description 좋아요한 게시글 목록 조회 가능
+  */
   static async getLikeArticleByUser(userId: number) {
     return await db.like.findMany({
-        where: {
-          userId,
-          articleId: {
-            not: null, // 게시글에 대한 좋아요만 조회
-          }
-        },
-        include: {
-          article: {
-            include: {
-              user: {
-                select: {
-                  id: true,
-                  nickname: true,
-                  image: true
-                }
+      where: {
+        userId,
+        articleId: {
+          not: null, // 게시글에 대한 좋아요만 조회
+        }
+      },
+      include: {
+        article: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                nickname: true,
+                image: true
               }
             }
-          },
+          }
         },
-      });
+      },
+    });
+  }
+
+  /**
+   * @description 상품에 좋아요한 유저 목록 조회
+   */
+  static async getProductLikes({ productId }: { productId: number }) {
+    return await db.like.findMany({
+      where: {
+        productId
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            nickname: true
+          }
+        }
+      }
+    });
   }
 }

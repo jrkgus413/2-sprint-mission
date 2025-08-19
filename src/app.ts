@@ -1,17 +1,20 @@
 import { NextFunction, Request, Response } from "express";
 
-import  express from "express";
-import  logger from "morgan";
-import  cors from "cors";
-import  cookieParser from "cookie-parser";
-import  { PORT } from "./utils/const";
+import express from "express";
+import logger from "morgan";
+import cors from "cors";
+import http from "http";
 import createError from "http-errors";
+import cookieParser from "cookie-parser";
+
+import { PORT } from "./utils/const";
+import indexRouter from "./routes/index";
+import { initSocket } from "./utils/socket";
 
 // Express 앱 생성
 const app = express();
-// 라우터 설정
-import  indexRouter from "./routes/index";
-
+const server = http.createServer(app);
+initSocket(server);
 
 // CORS 설정
 app.use(cors({
@@ -27,17 +30,17 @@ app.use(cookieParser()); // 쿠키 파서 미들웨어 추가
 app.use("/", indexRouter);
 app.use("/uploads", express.static("uploads"));
 
-app.get("/", (req:Request, res:Response) => {
+app.get("/", (req: Request, res: Response) => {
   res.send("실행 완료");
 });
 
 // catch 404 and forward to error handler
-app.use((req:Request, res:Response, next:NextFunction) => {
+app.use((req: Request, res: Response, next: NextFunction) => {
   next(createError(404));
 });
 
 // error handler
-app.use((err: { message: any; status: any; }, req:Request, res:Response, next:NextFunction) => {
+app.use((err: { message: any; status: any; }, req: Request, res: Response, next: NextFunction) => {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
@@ -46,9 +49,8 @@ app.use((err: { message: any; status: any; }, req:Request, res:Response, next:Ne
   res.status(err.status || 500).json({ error: err.message });
 });
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`서버가 포트 ${PORT}에서 실행 중입니다.`);
 });
 
-
-export default app;
+export default server;

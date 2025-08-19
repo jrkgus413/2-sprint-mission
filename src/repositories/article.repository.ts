@@ -70,10 +70,19 @@ export default class ArticleRepository {
    */
   static async getArticleByUser(userId: number) {
     return await db.article.findMany({
-        where: {
-          userId
-        }
-      });
+      where: {
+        userId
+      }
+    });
+  }
 
+  /**
+   * @description 게시글 id로 작성자 조회
+   */
+  static async getArticleAuthor(articleId: number) {
+    return await db.article.findUnique({
+      where: { id: articleId },
+      select: { user: true }
+    });
   }
 }

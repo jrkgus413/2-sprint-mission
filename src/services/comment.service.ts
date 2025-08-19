@@ -4,19 +4,29 @@ import { CommentRepository } from "../repositories/comment.repository";
 import ProductRepository from "../repositories/product.repository";
 import { CommentParamType } from "../types/comment.type";
 import { AuthenticationError, NotFoundError } from "../utils/error";
+import { sendNotification } from "../utils/socket";
+import NotificationService from "./notification.service";
 
 export class CommentService {
   /**
    * @description 게시글 / 상품 댓글 등록
   */
-  static async postArticleComment({ content, relationId, userId, relationType }: CommentParamType) {
+  static async postArticleComment({ content, relationId, userId }: CommentParamType) {
     // 로그인 여부 확인
     if (!userId) throw new AuthenticationError("로그인이 필요합니다.");
-    
+
     // 게시글 ID로 게시글 조회
     const article = await ArticleRepository.getArticleById(relationId);
-    if (!article) throw new NotFoundError("게시글이 존재하지 않습니다.")
+    if (!article) throw new NotFoundError("게시글이 존재하지 않습니다.");
 
+    const author = await ArticleRepository.getArticleAuthor(relationId);
+    if (!author?.user) throw new NotFoundError("작성자가 존재하지 않습니다.");
+
+    // 알림 생성
+    if (author.user.id !== userId) {
+      const notification = await NotificationService.postNotification(author.user.id, `${userId}님이 게시글에 댓글을 남겼습니다.`, "comment");
+      sendNotification(author.user.id, notification); // 소켓 알림 추가
+    }
     // 게시글이 존재하는 경우 댓글 등록
     return await CommentRepository.postArticleComment({
       content,
@@ -28,13 +38,14 @@ export class CommentService {
   /**
   * @description 상품 댓글 등록
   */
-  static async postProductComment({ content, relationId, userId, relationType }: CommentParamType) {
+  static async postProductComment({ content, relationId, userId }: CommentParamType) {
     // 로그인 여부 확인
     if (!userId) throw new AuthenticationError("로그인이 필요합니다.");
-    
+
     // 상품 ID로 상품 조회
     const product = await ProductRepository.getProductById(relationId);
     if (!product) throw new NotFoundError("상품이 존재하지 않습니다.");
+
     return await CommentRepository.postProductComment({
       content,
       relationId,
