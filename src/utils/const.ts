@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT) || 3000;
 const SALT_ROUNDS = 10;
 const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || 'default_access_secret';
 const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'default_access_secret';

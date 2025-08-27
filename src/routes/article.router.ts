@@ -16,7 +16,7 @@ router.route("/")
 router.route("/:id")
   .all(validateParamId)
   .get(withAsync(ArticleController.getArticleById))
-  .patch(authenticate, validateArticle, withAsync(ArticleController.patchArticle))
+  .patch(authenticate, withAsync(ArticleController.patchArticle))
   .delete(authenticate, withAsync(ArticleController.deleteArticle));
 
 // article 관련 comment router

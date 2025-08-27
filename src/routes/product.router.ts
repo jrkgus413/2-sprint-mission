@@ -14,14 +14,14 @@ router.route("/")
 router.route("/:id")
   .all(validateParamId)
   .get(withAsync(ProductController.getProductById))
-  .patch(authenticate, validateProduct, withAsync(ProductController.patchProduct))
+  .patch(authenticate, withAsync(ProductController.patchProduct))
   .delete(authenticate, withAsync(ProductController.deleteProduct));
 
 // product 관련 comment router
 router.use(
   "/:id/comments",
   validateParamId,
-  withAsync((req:Request, res:Response, next:NextFunction) => { req.relationType = "products"; next(); }),
+  withAsync((req: Request, res: Response, next: NextFunction) => { req.relationType = "products"; next(); }),
   commentRouter
 );
 
@@ -29,7 +29,7 @@ router.use(
 router.use(
   "/:id/like",
   validateParamId,
-  withAsync((req:Request, res:Response, next:NextFunction) => { req.relationType = "products"; next(); }),
+  withAsync((req: Request, res: Response, next: NextFunction) => { req.relationType = "products"; next(); }),
   likeRouter
 );
 

@@ -5,6 +5,7 @@ import usersRouter from "./users.router";
 import articlesRouter from "./article.router";
 import productsRouter from "./product.router";
 import fileRouter from "./file.router";
+import notificationRouter from "./notification.router";
 
 const router = express.Router();
 
@@ -20,5 +21,7 @@ router.use("/articles", articlesRouter);
 router.use("/products", productsRouter);
 /* files 관련 라우터 */
 router.use("/files", fileRouter);
+/* notifications 관련 라우터 */
+router.use("/notifications", notificationRouter);
 
 export default router;

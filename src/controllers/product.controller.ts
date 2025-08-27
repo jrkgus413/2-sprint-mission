@@ -72,7 +72,7 @@ export default class ProductController {
     * @param {number} req.body.price - 상품 가격
     * @param {Array<string>} req.body.tags - 상품 태그
     * @param {string} req.body.imageUrl - 상품 이미지 URL
-   */
+    */
   static async patchProduct(req: Request, res: Response) {
     const body: UpdateProductDto = req.body;
     const productId = getValidatedId(req.validatedId!);
