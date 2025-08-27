@@ -3,14 +3,17 @@ import e, { NextFunction, Request, Response } from "express";
 import express from "express";
 import logger from "morgan";
 import cors from "cors";
+import http from "http";
 import createError from "http-errors";
 import cookieParser from "cookie-parser";
 
 import { PORT } from "./utils/const";
+import { initSocket } from "./utils/socket";
 import indexRouter from "./routes/index";
 
 // Express 앱 생성
 const app = express();
+// 라우터 설정
 
 
 // CORS 설정
