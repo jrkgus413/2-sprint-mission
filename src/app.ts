@@ -1,20 +1,17 @@
-import { NextFunction, Request, Response } from "express";
+import e, { NextFunction, Request, Response } from "express";
 
 import express from "express";
 import logger from "morgan";
 import cors from "cors";
-import http from "http";
 import createError from "http-errors";
 import cookieParser from "cookie-parser";
 
 import { PORT } from "./utils/const";
 import indexRouter from "./routes/index";
-import { initSocket } from "./utils/socket";
 
 // Express 앱 생성
 const app = express();
-const server = http.createServer(app);
-initSocket(server);
+
 
 // CORS 설정
 app.use(cors({
@@ -49,8 +46,4 @@ app.use((err: { message: any; status: any; }, req: Request, res: Response, next:
   res.status(err.status || 500).json({ error: err.message });
 });
 
-server.listen(PORT, () => {
-  console.log(`서버가 포트 ${PORT}에서 실행 중입니다.`);
-});
-
-export default server;
+export default app;
