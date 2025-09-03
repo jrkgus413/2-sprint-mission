@@ -9,7 +9,7 @@ import { OptionsType, TokenResultType, UserPayload } from '../types/token.types'
  * @description JWT 토큰 생성 함수
  * @param {object} user 
  */
-export const createToken = (user: UserPayload):TokenResultType => {
+export const createToken = (user: UserPayload): TokenResultType => {
   const payload = { userId: user.id };
 
   const accessToken: string = jwt.sign(payload, JWT_ACCESS_SECRET, { expiresIn: '1h' });
@@ -75,7 +75,7 @@ export const setCookie = (res: Response, accessToken: string, refeshToken: strin
   const options: OptionsType = {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    sameSite: process.env.NODE_ENV === 'test' ? 'lax' : 'strict', // 테스트 환경에서는 'lax' 사용
   };
   // cookie에 AccessToken 저장
   res.cookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, { ...options, maxAge: 1 * 60 * 60 * 1000 });
