@@ -6,6 +6,7 @@ import articlesRouter from "./article.router";
 import productsRouter from "./product.router";
 import fileRouter from "./file.router";
 import notificationRouter from "./notification.router";
+import uploadRouter from "./upload.router";
 
 const router = express.Router();
 
@@ -23,5 +24,7 @@ router.use("/products", productsRouter);
 router.use("/files", fileRouter);
 /* notifications 관련 라우터 */
 router.use("/notifications", notificationRouter);
+/* uploads 관련 라우터 */
+router.use("/upload", uploadRouter);
 
 export default router;

@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "build": "tsc",
-    "start": "node dist/app.js",
-    "dev": "npx ts-node --files src/app.ts",
-    "dev:watch": "nodemon --watch src --ext ts --exec ts-node src/app.ts",
+    "start": "tsc && node dist/server.js",
+    "dev": "npx ts-node --files src/server.ts",
+    "dev:watch": "nodemon --watch src --ext ts --exec ts-node src/server.ts",
     "seed": "node prisma/seed.js",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -14,7 +14,9 @@
     "test:integration": "dotenv -e .env.test -- prisma migrate deploy && dotenv -e .env.test -- jest --runInBand"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.879.0",
     "@prisma/client": "^6.8.2",
+    "aws-sdk": "^2.1692.0",
     "bcrypt": "^6.0.0",
     "cookie-parser": "~1.4.4",
     "cors": "^2.8.5",
@@ -26,7 +28,8 @@
     "jade": "~1.11.0",
     "jsonwebtoken": "^9.0.2",
     "morgan": "~1.9.1",
-    "multer": "^2.0.0",
+    "multer": "^2.0.2",
+    "multer-s3": "^3.0.1",
     "socket.io": "^4.8.1",
     "superstruct": "^2.0.2"
   },
@@ -44,6 +47,7 @@
     "@types/multer": "^2.0.0",
     "@types/socket.io": "^3.0.1",
     "@types/supertest": "^6.0.3",
+    "@types/uuid": "^10.0.0",
     "dotenv-cli": "^10.0.0",
     "jest": "^30.0.5",
     "nodemon": "^3.1.10",
