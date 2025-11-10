@@ -6,6 +6,9 @@ const main = async () => {
   // const array = await inputArray(); // 사용자 입력
   const array = randomArray(); // 랜덤으로 테스트 가능
   console.log("입력된 배열:", array);
+
+  const selectSorted = selectionSort(array);
+  console.log("선택 정렬:", selectSorted);
 };
 
 main();
