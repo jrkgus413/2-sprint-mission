@@ -1,0 +1,11 @@
+import { inputArray, randomArray } from "./mock.js";
+import { selectionSort } from "./sorts/select-sort.js";
+
+// 메인 함수
+const main = async () => {
+  // const array = await inputArray(); // 사용자 입력
+  const array = randomArray(); // 랜덤으로 테스트 가능
+  console.log("입력된 배열:", array);
+};
+
+main();
