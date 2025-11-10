@@ -1,4 +1,5 @@
 import { inputArray, randomArray } from "./mock.js";
+import { insertionSort } from "./sorts/insert-sort.js";
 import { selectionSort } from "./sorts/select-sort.js";
 
 // 메인 함수
@@ -9,6 +10,9 @@ const main = async () => {
 
   const selectSorted = selectionSort(array);
   console.log("선택 정렬:", selectSorted);
+
+  const insertSorted = insertionSort(array);
+  console.log("삽입 정렬:", insertSorted);
 };
 
 main();
