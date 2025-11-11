@@ -31,7 +31,7 @@ export const randomArray = () => {
   const maxCount = Math.floor(Math.random() * 6) + 5; // 5~10 길이
   const randomArr = [];
   for (let i = 0; i < maxCount; i++) {
-    randomArr.push(Math.floor(Math.random() * 100));
+    randomArr.push(Math.floor(Math.random() * 99) + 1); // 1~99 랜덤 숫자
   }
   return randomArr;
 };
